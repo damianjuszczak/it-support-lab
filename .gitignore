@@ -1,0 +1,11 @@
+.env
+*.env
+*.key
+*.pem
+data/
+*.db
+*.sqlite*
+*.log
+.vscode/
+.DS_Store
+Thumbs.db
