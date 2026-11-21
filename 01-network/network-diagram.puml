@@ -1,0 +1,70 @@
+@startuml
+title Home Lab Architecture
+top to bottom direction
+
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 60
+
+skinparam title {
+    FontSize 18
+    FontColor #0f172a
+    Padding 15
+}
+
+skinparam rectangle {
+    BackgroundColor #ffffff
+    BorderColor #cbd5e1
+    BorderThickness 1.5
+    FontColor #1e293b
+}
+
+skinparam node {
+    BackgroundColor #f8fafc
+    BorderColor #64748b
+    BorderThickness 2
+    FontColor #0f172a
+}
+
+skinparam cloud {
+    BackgroundColor #f1f5f9
+    BorderColor #94a3b8
+    FontColor #334155
+}
+
+skinparam arrow {
+    Color #475569
+    FontColor #475569
+    FontSize 11
+}
+
+cloud "Internet" as inet
+node "Xiaomi AX3000\nOpenWrt Router" as router #eff6ff;line:3b82f6
+cloud "Tailscale VPN\nRemote Access" as ts #f0fdf4;line:22c55e
+
+node "HP T630 (Lab Host)" as t630 #f8fafc;line:334155 {
+    rectangle "Windows Server VM\nActive Directory, DNS, DHCP" as dc01 #eef2ff;line:6366f1
+    rectangle "Windows 10 Pro VM\nDomain Test Client" as win10 #eef2ff;line:6366f1
+    rectangle "Uptime Kuma (Docker)\nMonitoring and Alerts" as kuma #fffbeb;line:f59e0b
+    rectangle "Print Server (CUPS)\nNetwork Printing" as cups #fffbeb;line:f59e0b
+}
+
+node "Main PC / Laptop\nVS Code + SSH" as pc #f8fafc;line:475569
+
+inet <--> router : WAN
+router <--> t630 : LAN
+router <--> pc : LAN / Wi-Fi
+
+dc01 <--> win10 : Domain / GPO
+kuma ..> router : Ping
+kuma ..> dc01 : TCP 389 / DNS
+kuma ..> cups : TCP 631
+
+pc ..> ts : Remote Session
+ts ..> t630 : SSH / Web UI
+
+@enduml
